@@ -16,9 +16,9 @@ async function getImage() {
     return await fetch(`http://localhost:3000/api/getLatestImage`);
 }
 
-function renderImage() {
-    let imageElement = document.getElementById('characterImage');
-    imageElement.innerHTML = `<img src=${getImage()}>`
+async function renderImage() {
+    let rootElem = document.getElementById('root2');
+    rootElem.innerHTML = `<img src=${await getImage()}>`
 }
 
 renderImage();

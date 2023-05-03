@@ -92,18 +92,8 @@ async function fetchAffirmation(options) {
 /******* END OPENAI STUFF *********/
 
 /******* START STABILITYAI STUFF *********/
-let url = 'https://api.stability.ai';
-let endpoints = {
-    userAccount: 'v1/user',
-    engines: 'v1/engines',
-    imageGen: 'v1/generation'
-}
-
-console.log(url + endpoints.imageGen);
 
 let engineId = 'stable-diffusion-xl-beta-v2-2-2';
-
-
 
 let reqHeaders = new Headers();
     reqHeaders.append('Authorization', `Bearer ${process.env.stabilityApiKey}`);
@@ -111,8 +101,6 @@ let reqHeaders = new Headers();
 
 // discord links for generate image:  https://discord.com/channels/1002292111942635562/1042896447311454361/1096559685974368298
 let imagePrompt = "A dr seuss style character, cartoon, smiling, zen buddhism";
-// let imagePrompt = "a beautiful painting of dried flowering grasses, ultra detailed, golden hour";
-//let imagePrompt = "a salvador dali style painting of Manhattan, golden hour";
 
 function writeIndexFile(indexJson, prompt, timeStamp){
     let promptFileIndex = JSON.parse(fs.readFileSync(indexJson));
@@ -199,10 +187,6 @@ app.get('/api/getLatestImage', async (req, res) => {
     };
     let sorted = imageList.sort(compareFileNames);
     console.log(JSON.stringify(sorted[0]));
-    //let encodedImage = fs.readFileSync(`./${sorted[0].imageFileName}`, 'base64');
-    //console.log(encodedImage);
-    //res.send(JSON.stringify(sorted[0]));
-    // res.sendFile(`${sorted[0].imageFileName}`, {root: '.'});
     res.sendFile(`${sorted[0].imageFileName}`, {root: '.'});
 })
 
