@@ -32,7 +32,7 @@ function getTimeStamp(){
     if (hour < 10) {
         hour = `0${hour}`
     }
-    return `${month}${day}${year}-${hour}${minute}${seconds}`;
+    return `${year}${month}${day}-${hour}${minute}${seconds}`;
 
 }
 
@@ -74,6 +74,7 @@ let openAiOptions = {
 function writeAffirmationIndexFile(indexJson, prompt, completion, timeStamp){
     let promptFileIndex = JSON.parse(fs.readFileSync(indexJson));
     promptFileIndex.push({ timeStamp: timeStamp, prompt: prompt, affirmation: completion});
+    
     fs.writeFileSync(indexJson, JSON.stringify(promptFileIndex));
 }
 
@@ -87,7 +88,7 @@ async function fetchAffirmation(options) {
     writeAffirmationIndexFile('prompt-and-affirmation-index.json', openApiPrompt, affirmation, timeStamp);
 }
 
-fetchAffirmation(openAiOptions);
+// fetchAffirmation(openAiOptions);
 /******* END OPENAI STUFF *********/
 
 /******* START STABILITYAI STUFF *********/
@@ -165,23 +166,23 @@ generateImage('stable-diffusion-xl-beta-v2-2-2', imagePrompt);
 /******* END STABILITYAI STUFF *********/
 
 app.get('/api/getLatestAffirmation', async (req, res) => {
-    let affirmationList = JSON.parse(fs.readFileSync('./prompt-and-file-index.json', 'utf8'));
-    console.log(typeof(affirmationList));
-    
+    let affirmationList = JSON.parse(fs.readFileSync('./prompt-and-affirmation-index.json', 'utf8'));
+        
     function compareFileNames(a,b) {
-        if (a.dateStamp > b.dateStamp) {
+        if (a.timeStamp > b.timeStamp) {
             return -1;
-        } else if (a.dateStamp < b.dateStamp){
+        } else if (a.timeStamp < b.timeStamp){
             return 1;
         } else {
             return 0;
         }
     };
 
-    let sorted = affirmationList.sort(compareFileNames);
-    console.log(JSON.stringify(sorted[0]));
-    res.send(sorted[0].completion);
-})
+    let sorted = await affirmationList.sort(compareFileNames);
+    let affirmation = sorted[0].affirmation;
+    console.log(affirmation);
+    res.send(affirmation);
+});
 
 app.get('/api/getLatestImage', async (req, res) => {
     let imageList = JSON.parse(fs.readFileSync('./prompt-and-file-index.json', 'utf8'));
@@ -201,6 +202,7 @@ app.get('/api/getLatestImage', async (req, res) => {
     //let encodedImage = fs.readFileSync(`./${sorted[0].imageFileName}`, 'base64');
     //console.log(encodedImage);
     //res.send(JSON.stringify(sorted[0]));
+    // res.sendFile(`${sorted[0].imageFileName}`, {root: '.'});
     res.sendFile(`${sorted[0].imageFileName}`, {root: '.'});
 })
 
