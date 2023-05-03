@@ -149,7 +149,7 @@ async function getEngines(){
     console.log(data);
 }
 
-generateImage('stable-diffusion-xl-beta-v2-2-2', imagePrompt);
+// generateImage('stable-diffusion-xl-beta-v2-2-2', imagePrompt);
 
 /******* END STABILITYAI STUFF *********/
 
@@ -187,7 +187,7 @@ app.get('/api/getLatestImage', async (req, res) => {
     };
     let sorted = imageList.sort(compareFileNames);
     console.log(JSON.stringify(sorted[0]));
-    res.sendFile(`${sorted[0].imageFileName}`, {root: '.'});
+    res.sendFile(`${sorted[0].imageFileName}`, {root: __dirname});
 })
 
 app.listen(PORT, () => {
